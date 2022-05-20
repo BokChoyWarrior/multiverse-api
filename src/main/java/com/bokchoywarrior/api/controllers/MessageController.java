@@ -5,6 +5,7 @@ import com.bokchoywarrior.api.repositories.MessageRepository;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -24,7 +25,9 @@ public class MessageController {
 
     @GetMapping
     @RequestMapping("{id}")
+    @PreAuthorize("hasAnyAuthority('READ', 'WRITE')")
     public Message get(@PathVariable Long id) {
+        System.out.println("Logging");
         Optional<Message> found = messageRepository.findById(id);
         if (!found.isPresent()) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, String.format("Entity with id: %s not found", id));
